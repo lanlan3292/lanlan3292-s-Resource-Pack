@@ -57,7 +57,7 @@
 				]
 			},
 			{
-				"directory": "v16_39_backport",
+				"directory": "v16_38_backport",
 				"min_format": [
 					16
 				],
@@ -67,7 +67,7 @@
 				],
 				"formats": [
 					16,
-					39
+					38
 				]
 			},
 			{
