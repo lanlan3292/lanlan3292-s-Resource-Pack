@@ -4,7 +4,7 @@
 		"pack_format": 34,
 		"supported_formats": [
 			34,
-			64
+			76
 		],
 		"min_format": 34,
 		"max_format": [
@@ -29,6 +29,20 @@
 				]
 			},
 			{
+				"directory": "v16_38_backport",
+				"min_format": [
+					16
+				],
+				"max_format": [
+					37,
+					0
+				],
+				"formats": [
+					16,
+					37
+				]
+			},
+			{
 				"directory": "global",
 				"min_format": [
 					16
@@ -40,20 +54,6 @@
 				"formats": [
 					16,
 					99
-				]
-			},
-			{
-				"directory": "v16_38_backport",
-				"min_format": [
-					16
-				],
-				"max_format": [
-					37,
-					0
-				],
-				"formats": [
-					16,
-					38
 				]
 			},
 			{
