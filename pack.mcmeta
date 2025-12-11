@@ -57,6 +57,20 @@
 				]
 			},
 			{
+				"directory": "v30_30",
+				"min_format": [
+					30
+				],
+				"max_format": [
+					30,
+					0
+				],
+				"formats": [
+					30,
+					30
+				]
+			},
+			{
 				"directory": "v55_55",
 				"min_format": [
 					55
