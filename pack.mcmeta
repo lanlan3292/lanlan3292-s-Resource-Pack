@@ -1,0 +1,33 @@
+{
+	"pack": {
+		"description": "lanlan3292",
+		"pack_format": 30,
+		"supported_formats": [
+			30,
+			30
+		],
+		"min_format": 30,
+		"max_format": [
+			30,
+			0
+		]
+	},
+	"overlays": {
+		"entries": [
+			{
+				"directory": "v30_30",
+				"min_format": [
+					30
+				],
+				"max_format": [
+					30,
+					0
+				],
+				"formats": [
+					30,
+					30
+				]
+			}
+		]
+	}
+}
