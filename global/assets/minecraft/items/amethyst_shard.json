@@ -1,0 +1,18 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "minecraft:custom_name",
+    "cases": [
+      {"when": "anon","model": {"type": "minecraft:model","model": "minecraft:item/not_implemented"}},
+      {"when": "soyo","model": {"type": "minecraft:model","model": "minecraft:item/not_implemented"}},
+      {"when": "tomori","model": {"type": "minecraft:model","model": "minecraft:item/not_implemented"}},
+      {"when": "taki","model": {"type": "minecraft:model","model": "minecraft:item/not_implemented"}},
+      {"when": "rana","model": {"type": "minecraft:model","model": "minecraft:item/not_implemented"}}
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/amethyst_shard"
+    }
+  }
+}
