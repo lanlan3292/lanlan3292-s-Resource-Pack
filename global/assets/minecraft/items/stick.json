@@ -1,0 +1,27 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:component",
+    "component": "minecraft:custom_name",
+    "cases": [
+      {
+        "when": "棍母",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/gunmu"
+        }
+      },
+      {
+        "when": "gunmu",
+        "model": {
+          "type": "minecraft:model",
+          "model": "minecraft:item/gunmu"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "minecraft:item/stick"
+    }
+  }
+}
