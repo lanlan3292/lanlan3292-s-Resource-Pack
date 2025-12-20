@@ -3,31 +3,13 @@
 		"description": "lRP - POTATIS font",
 		"pack_format": 30,
 		"supported_formats": [
-			30,
-			30
+			4,
+			99
 		],
-		"min_format": 30,
+		"min_format": 4,
 		"max_format": [
-			30,
+			99,
 			0
-		]
-	},
-	"overlays": {
-		"entries": [
-			{
-				"directory": "v30_30",
-				"min_format": [
-					30
-				],
-				"max_format": [
-					30,
-					0
-				],
-				"formats": [
-					30,
-					30
-				]
-			}
 		]
 	}
 }
