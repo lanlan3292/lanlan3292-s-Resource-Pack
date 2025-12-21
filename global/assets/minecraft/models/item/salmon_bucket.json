@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/bucket2",
+  "textures": {
+    "layer0": "minecraft:item/salmon_bucket"
+  }
+}

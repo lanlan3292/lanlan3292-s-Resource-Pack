@@ -1,0 +1,12 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/apple_inc.png",
+            "ascent": 7,
+            "chars": [
+                "\uF8FF"
+            ]
+        }
+    ]
+}

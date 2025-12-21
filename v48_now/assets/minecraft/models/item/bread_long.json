@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/bread_long",
+    "particle": "minecraft:item/bread"
+  },
+      "display": {
+        "ground": {
+            "rotation": [ 0, -45, 0 ],
+            "translation": [ 0, 0, 0],
+            "scale":[ 2, 2, 2 ]
+        },
+        "head": {
+            "rotation": [ 0, 180, 45 ],
+            "translation": [ 0, 45, 0],
+            "scale":[ 4, 4, 4]
+        },
+        "thirdperson_righthand": {
+            "rotation": [ 0, 90, 45 ],
+            "translation": [ 0, 18, 2 ],
+            "scale": [ 2.20, 2.20, 2.20 ]
+        },
+        "thirdperson_lefthand": {
+            "rotation": [ 0, -90, -45 ],
+            "translation": [ 0, 18, 2 ],
+            "scale": [ 2.20, 2.20, 2.20 ]
+        },
+        "firstperson_righthand": {
+            "rotation": [ 0, -95, 125 ],
+            "translation": [ 8, 4, -18],
+            "scale": [ 2.72, 2.72, 2.72 ]
+        },
+        "firstperson_lefthand": {
+            "rotation": [ 0, 85, -125 ],
+            "translation": [ 8, 4, -18],
+            "scale": [ 2.72, 2.72, 2.72 ]
+        },
+        "fixed": {
+            "rotation": [ 0, 180, -45 ],
+            "translation": [ 0, 0, -2],
+            "scale": [ 4, 4, 4 ]
+        }
+    }
+}

@@ -5,14 +5,7 @@
     "component": "minecraft:custom_name",
     "cases": [
       {
-        "when": "棍母",
-        "model": {
-          "type": "minecraft:model",
-          "model": "minecraft:item/gunmu"
-        }
-      },
-      {
-        "when": "gunmu",
+        "when": ["棍母", "gunmu", "Gunmu", "GUNMU", "GunMu"],
         "model": {
           "type": "minecraft:model",
           "model": "minecraft:item/gunmu"
