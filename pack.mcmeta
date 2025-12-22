@@ -43,6 +43,20 @@
 				]
 			},
 			{
+				"directory": "global",
+				"min_format": [
+					16
+				],
+				"max_format": [
+					99,
+					0
+				],
+				"formats": [
+					16,
+					99
+				]
+			},
+			{
 				"directory": "v48_now",
 				"min_format": [
 					48
@@ -57,16 +71,16 @@
 				]
 			},
 			{
-				"directory": "global",
+				"directory": "v53_now",
 				"min_format": [
-					16
+					53
 				],
 				"max_format": [
 					99,
 					0
 				],
 				"formats": [
-					16,
+					53,
 					99
 				]
 			},
