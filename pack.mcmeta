@@ -57,6 +57,34 @@
 				]
 			},
 			{
+				"directory": "v16_19",
+				"min_format": [
+					16
+				],
+				"max_format": [
+					19,
+					0
+				],
+				"formats": [
+					16,
+					19
+				]
+			},
+			{
+				"directory": "v16_47",
+				"min_format": [
+					16
+				],
+				"max_format": [
+					47,
+					0
+				],
+				"formats": [
+					16,
+					47
+				]
+			},
+			{
 				"directory": "v48_now",
 				"min_format": [
 					48
