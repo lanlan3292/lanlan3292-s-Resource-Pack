@@ -1,0 +1,6 @@
+{
+  "parent": "create:block/pulse_timer_powering",
+  "textures": {
+    "top": "create:block/diodes/pulse_timer/powered_powering"
+  }
+}
