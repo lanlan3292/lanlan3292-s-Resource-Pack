@@ -26,8 +26,13 @@
     "menu.savingLevel": "保存存档中...",
     "menu.shareToLan": "开放至网络",
     "menu.singleplayer": "本地游戏",
+    "title.singleplayer": "本地单人游戏",
     "menu.multiplayer": "在线游戏",
+    "title.multiplayer.lan": "在线游戏(局域网)",
+    "title.multiplayer.other": "在线游戏(（第三方服务器)",
+    "title.multiplayer.realms": "在线游戏(Realms)",
     "title.credits": "Mojang AB",
+    "advancements.empty": "Nothing......",
     // 25w14craftmine
     "gui.door.field.error": "Oops! 出了些问题...",
     "unlocks.unlock.learning_1.name": "学习",
