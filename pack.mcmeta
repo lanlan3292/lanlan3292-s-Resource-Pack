@@ -1,0 +1,33 @@
+{
+	"pack": {
+		"description": "\u00A7a■ lRP - Main - C.R.I.\u00A7f\n\ue20c\ue30c | By lanlan3292",
+		"pack_format": 34,
+		"supported_formats": [
+			34,
+			76
+		],
+		"min_format": 34,
+		"max_format": [
+			76,
+			0
+		]
+	},
+	"overlays": {
+		"entries": [
+			{
+				"directory": "global",
+				"min_format": [
+					16
+				],
+				"max_format": [
+					99,
+					0
+				],
+				"formats": [
+					16,
+					99
+				]
+			}
+		]
+	}
+}
