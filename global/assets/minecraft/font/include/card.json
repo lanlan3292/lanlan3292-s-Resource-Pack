@@ -1,0 +1,58 @@
+{
+    "providers": [
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/1_unknown.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue20a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/1_main.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue20b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/1_main_crop_ready_indicator.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue20c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/2_unknown.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue30a"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/2_base.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue30b"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/2_extra.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue30c"
+            ]
+        }
+    ]
+}

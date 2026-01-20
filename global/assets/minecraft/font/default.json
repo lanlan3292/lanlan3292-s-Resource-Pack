@@ -18,6 +18,10 @@
         {
             "type": "reference",
             "id": "minecraft:include/pua"
+        },
+        {
+            "type": "reference",
+            "id": "minecraft:include/card"
         }
     ]
 }
