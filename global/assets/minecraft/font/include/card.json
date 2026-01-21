@@ -2,7 +2,7 @@
     "providers": [
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/1_unknown.png",
+            "file": "minecraft:font/card/l_unknown.png",
             "height": 36,
             "ascent": 31,
             "chars": [
@@ -11,7 +11,7 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/1_main.png",
+            "file": "minecraft:font/card/l_main.png",
             "height": 36,
             "ascent": 31,
             "chars": [
@@ -20,7 +20,7 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/1_main_crop_ready_indicator.png",
+            "file": "minecraft:font/card/l_main_crop_ready_indicator.png",
             "height": 36,
             "ascent": 31,
             "chars": [
@@ -29,7 +29,7 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/2_unknown.png",
+            "file": "minecraft:font/card/r_unknown.png",
             "height": 36,
             "ascent": 31,
             "chars": [
@@ -38,7 +38,7 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/2_base.png",
+            "file": "minecraft:font/card/r_0_base.png",
             "height": 36,
             "ascent": 31,
             "chars": [
@@ -47,7 +47,7 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/2_extra.png",
+            "file": "minecraft:font/card/r_1_extra.png",
             "height": 36,
             "ascent": 31,
             "chars": [
