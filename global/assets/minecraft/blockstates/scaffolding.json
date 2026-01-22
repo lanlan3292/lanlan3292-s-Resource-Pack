@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "bottom=false": {
+      "model": "minecraft:block/scaffolding_stable"
+    },
+    "bottom=true,distance=6": {
+      "model": "minecraft:block/scaffolding_unstable_6"
+    },
+    "bottom=true,distance=7": {
+      "model": "minecraft:block/scaffolding_unstable_6"
+    },
+    "bottom=true": {
+      "model": "minecraft:block/scaffolding_unstable"
+    }
+  }
+}
