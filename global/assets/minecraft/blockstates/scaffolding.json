@@ -1,16 +1,39 @@
 {
   "variants": {
-    "bottom=false": {
-      "model": "minecraft:block/scaffolding_stable"
-    },
-    "bottom=true,distance=6": {
-      "model": "minecraft:block/scaffolding_unstable_6"
-    },
-    "bottom=true,distance=7": {
-      "model": "minecraft:block/scaffolding_unstable_6"
-    },
-    "bottom=true": {
-      "model": "minecraft:block/scaffolding_unstable"
-    }
+    "bottom=false,distance=6,waterlogged=false": { "model": "minecraft:block/scaffolding_stable_6" },
+    "bottom=false,distance=7,waterlogged=false": { "model": "minecraft:block/scaffolding_stable_6" },
+    "bottom=false,distance=6,waterlogged=true": { "model": "minecraft:block/scaffolding_stable_6" },
+    "bottom=false,distance=7,waterlogged=true": { "model": "minecraft:block/scaffolding_stable_6" },
+
+    "bottom=false,distance=0,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=1,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=2,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=3,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=4,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=5,waterlogged=false": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=0,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=1,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=2,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=3,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=4,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+    "bottom=false,distance=5,waterlogged=true": { "model": "minecraft:block/scaffolding_stable" },
+
+    "bottom=true,distance=6,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable_6" },
+    "bottom=true,distance=7,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable_6" },
+    "bottom=true,distance=6,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable_6" },
+    "bottom=true,distance=7,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable_6" },
+
+    "bottom=true,distance=0,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=1,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=2,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=3,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=4,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=5,waterlogged=false": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=0,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=1,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=2,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=3,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=4,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" },
+    "bottom=true,distance=5,waterlogged=true": { "model": "minecraft:block/scaffolding_unstable" }
   }
 }
