@@ -20,11 +20,20 @@
         },
         {
             "type": "bitmap",
-            "file": "minecraft:font/card/l_main_crop_ready_indicator.png",
+            "file": "minecraft:font/card/l_main_extra_crop_ready_indicator.png",
             "height": 36,
             "ascent": 31,
             "chars": [
                 "\ue20c"
+            ]
+        },
+        {
+            "type": "bitmap",
+            "file": "minecraft:font/card/l_main_extra_pure_glass.png",
+            "height": 36,
+            "ascent": 31,
+            "chars": [
+                "\ue20d"
             ]
         },
         {
