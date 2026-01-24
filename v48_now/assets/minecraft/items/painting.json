@@ -1,0 +1,189 @@
+{
+  "model": {
+    "type": "select",
+    "property": "minecraft:component",
+    "component": "painting/variant",
+    "cases": [
+      {
+        "when": "aztec",
+        "model": {
+          "type": "model",
+          "model": "item/painting/aztec"
+        }
+      },
+      {
+        "when": "aztec2",
+        "model": {
+          "type": "model",
+          "model": "item/painting/aztec2"
+        }
+      },
+      {
+        "when": "burning_skull",
+        "model": {
+          "type": "model",
+          "model": "item/painting/burning_skull"
+        }
+      },
+      {
+        "when": "creebet",
+        "model": {
+          "type": "model",
+          "model": "item/painting/creebet"
+        }
+      },
+      {
+        "when": "dennis",
+        "model": {
+          "type": "model",
+          "model": "item/painting/dennis"
+        }
+      },
+      {
+        "when": "earth",
+        "model": {
+          "type": "model",
+          "model": "item/painting/earth"
+        }
+      },
+      {
+        "when": "fire",
+        "model": {
+          "type": "model",
+          "model": "item/painting/fire"
+        }
+      },
+      {
+        "when": "kebab",
+        "model": {
+          "type": "model",
+          "model": "item/painting/kebab"
+        }
+      },
+      {
+        "when": "meditative",
+        "model": {
+          "type": "model",
+          "model": "item/painting/meditative"
+        }
+      },
+      {
+        "when": "plant",
+        "model": {
+          "type": "model",
+          "model": "item/painting/plant"
+        }
+      },
+      {
+        "when": "prairie_ride",
+        "model": {
+          "type": "model",
+          "model": "item/painting/prairie_ride"
+        }
+      },
+      {
+        "when": "sea",
+        "model": {
+          "type": "model",
+          "model": "item/painting/sea"
+        }
+      },
+      {
+        "when": "sunset",
+        "model": {
+          "type": "model",
+          "model": "item/painting/sunset"
+        }
+      },
+      {
+        "when": "tides",
+        "model": {
+          "type": "model",
+          "model": "item/painting/tides"
+        }
+      },
+      {
+        "when": "unpacked",
+        "model": {
+          "type": "model",
+          "model": "item/painting/unpacked"
+        }
+      },
+      {
+        "when": "wanderer",
+        "model": {
+          "type": "model",
+          "model": "item/painting/wanderer"
+        }
+      },
+      {
+        "when": "water",
+        "model": {
+          "type": "model",
+          "model": "item/painting/water"
+        }
+      },
+      {
+        "when": "wind",
+        "model": {
+          "type": "model",
+          "model": "item/painting/wind"
+        }
+      },
+
+      {
+        "when": "abstractato",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/abstractato"
+        }
+      },
+      {
+        "when": "burning_potato",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/burning_potato"
+        }
+      },
+      {
+        "when": "ceci",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/ceci"
+        }
+      },
+      {
+        "when": "mr_potato",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/mr_potato"
+        }
+      },
+      {
+        "when": "poisonous_potato",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/poisonous_potato"
+        }
+      },
+      {
+        "when": "potatoe",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/potatoe"
+        }
+      },
+      {
+        "when": "ubiquitato",
+        "model": {
+          "type": "model",
+          "model": "item/painting/potato/ubiquitato"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "model",
+      "model": "item/painting"
+    }
+  }
+}
