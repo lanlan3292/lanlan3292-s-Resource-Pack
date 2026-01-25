@@ -3,7 +3,7 @@
     "textures": {
         "particle": "block/scaffolding_top",
         "top": "block/scaffolding_top",
-		"top_0": "block/scaffolding_top_6",
+		"top_0": "block/scaffolding_top_6_1",
         "side": "block/scaffolding_side",
         "bottom": "block/scaffolding_bottom"
     },
