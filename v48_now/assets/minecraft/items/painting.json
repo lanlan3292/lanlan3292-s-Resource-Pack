@@ -5,6 +5,13 @@
     "component": "painting/variant",
     "cases": [
       {
+        "when": "alban",
+        "model": {
+          "type": "model",
+          "model": "item/painting/alban"
+        }
+      },
+      {
         "when": "aztec",
         "model": {
           "type": "model",
@@ -19,10 +26,45 @@
         }
       },
       {
+        "when": "backyard",
+        "model": {
+          "type": "model",
+          "model": "item/painting/backyard"
+        }
+      },
+      {
+        "when": "bomb",
+        "model": {
+          "type": "model",
+          "model": "item/painting/bomb"
+        }
+      },
+      {
+        "when": "baroque",
+        "model": {
+          "type": "model",
+          "model": "item/painting/baroque"
+        }
+      },
+      {
         "when": "burning_skull",
         "model": {
           "type": "model",
           "model": "item/painting/burning_skull"
+        }
+      },
+      {
+        "when": "bust",
+        "model": {
+          "type": "model",
+          "model": "item/painting/bust"
+        }
+      },
+      {
+        "when": "courbet",
+        "model": {
+          "type": "model",
+          "model": "item/painting/courbet"
         }
       },
       {
@@ -40,6 +82,13 @@
         }
       },
       {
+        "when": "donkey_kong",
+        "model": {
+          "type": "model",
+          "model": "item/painting/donkey_kong"
+        }
+      },
+      {
         "when": "earth",
         "model": {
           "type": "model",
@@ -51,6 +100,13 @@
         "model": {
           "type": "model",
           "model": "item/painting/fire"
+        }
+      },
+      {
+        "when": "graham",
+        "model": {
+          "type": "model",
+          "model": "item/painting/graham"
         }
       },
       {
@@ -75,6 +131,27 @@
         }
       },
       {
+        "when": "pointer",
+        "model": {
+          "type": "model",
+          "model": "item/painting/pointer"
+        }
+      },
+      {
+        "when": "pond",
+        "model": {
+          "type": "model",
+          "model": "item/painting/pond"
+        }
+      },
+      {
+        "when": "pool",
+        "model": {
+          "type": "model",
+          "model": "item/painting/pool"
+        }
+      },
+      {
         "when": "prairie_ride",
         "model": {
           "type": "model",
@@ -86,6 +163,13 @@
         "model": {
           "type": "model",
           "model": "item/painting/sea"
+        }
+      },
+      {
+        "when": "skeleton",
+        "model": {
+          "type": "model",
+          "model": "item/painting/skeleton"
         }
       },
       {
@@ -117,6 +201,13 @@
         }
       },
       {
+        "when": "wasteland",
+        "model": {
+          "type": "model",
+          "model": "item/painting/wasteland"
+        }
+      },
+      {
         "when": "water",
         "model": {
           "type": "model",
@@ -130,6 +221,8 @@
           "model": "item/painting/wind"
         }
       },
+
+
 
       {
         "when": "abstractato",
