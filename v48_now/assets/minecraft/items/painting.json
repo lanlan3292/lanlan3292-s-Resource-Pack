@@ -33,6 +33,13 @@
         }
       },
       {
+        "when": "baroque",
+        "model": {
+          "type": "model",
+          "model": "item/painting/baroque"
+        }
+      },
+      {
         "when": "bomb",
         "model": {
           "type": "model",
@@ -40,10 +47,10 @@
         }
       },
       {
-        "when": "baroque",
+        "when": "bouquet",
         "model": {
           "type": "model",
-          "model": "item/painting/baroque"
+          "model": "item/painting/bouquet"
         }
       },
       {
@@ -58,6 +65,27 @@
         "model": {
           "type": "model",
           "model": "item/painting/bust"
+        }
+      },
+      {
+        "when": "cavebird",
+        "model": {
+          "type": "model",
+          "model": "item/painting/cavebird"
+        }
+      },
+      {
+        "when": "changing",
+        "model": {
+          "type": "model",
+          "model": "item/painting/changing"
+        }
+      },
+      {
+        "when": "cotan",
+        "model": {
+          "type": "model",
+          "model": "item/painting/cotan"
         }
       },
       {
@@ -96,6 +124,34 @@
         }
       },
       {
+        "when": "endboss",
+        "model": {
+          "type": "model",
+          "model": "item/painting/endboss"
+        }
+      },
+      {
+        "when": "fern",
+        "model": {
+          "type": "model",
+          "model": "item/painting/fern"
+        }
+      },
+      {
+        "when": "fighters",
+        "model": {
+          "type": "model",
+          "model": "item/painting/fighters"
+        }
+      },
+      {
+        "when": "finding",
+        "model": {
+          "type": "model",
+          "model": "item/painting/finding"
+        }
+      },
+      {
         "when": "fire",
         "model": {
           "type": "model",
@@ -110,6 +166,13 @@
         }
       },
       {
+        "when": "humble",
+        "model": {
+          "type": "model",
+          "model": "item/painting/humble"
+        }
+      },
+      {
         "when": "kebab",
         "model": {
           "type": "model",
@@ -117,10 +180,52 @@
         }
       },
       {
+        "when": "lowmist",
+        "model": {
+          "type": "model",
+          "model": "item/painting/lowmist"
+        }
+      },
+      {
+        "when": "match",
+        "model": {
+          "type": "model",
+          "model": "item/painting/match"
+        }
+      },
+      {
         "when": "meditative",
         "model": {
           "type": "model",
           "model": "item/painting/meditative"
+        }
+      },
+      {
+        "when": "orb",
+        "model": {
+          "type": "model",
+          "model": "item/painting/orb"
+        }
+      },
+      {
+        "when": "owlemons",
+        "model": {
+          "type": "model",
+          "model": "item/painting/owlemons"
+        }
+      },
+      {
+        "when": "passage",
+        "model": {
+          "type": "model",
+          "model": "item/painting/passage"
+        }
+      },
+      {
+        "when": "pigscene",
+        "model": {
+          "type": "model",
+          "model": "item/painting/pigscene"
         }
       },
       {
@@ -173,6 +278,27 @@
         }
       },
       {
+        "when": "skull_and_roses",
+        "model": {
+          "type": "model",
+          "model": "item/painting/skull_and_roses"
+        }
+      },
+      {
+        "when": "stage",
+        "model": {
+          "type": "model",
+          "model": "item/painting/stage"
+        }
+      },
+      {
+        "when": "sunflowers",
+        "model": {
+          "type": "model",
+          "model": "item/painting/sunflowers"
+        }
+      },
+      {
         "when": "sunset",
         "model": {
           "type": "model",
@@ -191,6 +317,13 @@
         "model": {
           "type": "model",
           "model": "item/painting/unpacked"
+        }
+      },
+      {
+        "when": "void",
+        "model": {
+          "type": "model",
+          "model": "item/painting/void"
         }
       },
       {
@@ -219,6 +352,13 @@
         "model": {
           "type": "model",
           "model": "item/painting/wind"
+        }
+      },
+      {
+        "when": "wither",
+        "model": {
+          "type": "model",
+          "model": "item/painting/wither"
         }
       },
 
