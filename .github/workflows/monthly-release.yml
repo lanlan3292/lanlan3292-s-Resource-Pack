@@ -30,16 +30,19 @@ jobs:
           ref: ${{ matrix.branch }}
           fetch-depth: 0
 
-      - name: Process Release (ZIP + Notes)
+      - name: Process Release (ZIP + Replace Notes)
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
 
           DATE=$(date +'%Y-%m-%d-%H%M%S')
           COMMIT=$(git rev-parse --short HEAD)
-
-          ZIP_NAME="${{ matrix.filename }}.zip"
           RELEASE_TAG="Nightly-$(date +'%Y-%m')"
+          ZIP_NAME="${{ matrix.filename }}.zip"
+          BRANCH_LABEL="${{ matrix.label }}"
+          ANCHOR="<!-- ${BRANCH_LABEL// /_}_ANCHOR -->"
 
           echo "ℹ️ Generating ZIP: $ZIP_NAME"
           zip -r -q "$ZIP_NAME" . -x ".git/*" -x "*.zip" -x ".github/*"
@@ -48,55 +51,56 @@ jobs:
             exit 1
           fi
 
-          # 确保 Release 存在
+          # 1. 确保 Release 存在（Prerelease）
           set +e
           gh release view "$RELEASE_TAG" >/dev/null 2>&1
           if [ $? -ne 0 ]; then
-            gh release create "$RELEASE_TAG" --title "Monthly Nightly Build $(date +'%Y-%m')" --notes "Initial Release Notes"
+            echo "ℹ️ Creating new prerelease: $RELEASE_TAG"
+            gh release create "$RELEASE_TAG" \
+              --title "Monthly Nightly Build $(date +'%Y-%m')" \
+              --notes "Initial Nightly Build" \
+              --prerelease
             sleep 2
           fi
           set -e
 
-          # 上传 ZIP（--clobber 覆盖同名文件）
+          # 2. 上传 ZIP（覆盖同名文件）
           gh release upload "$RELEASE_TAG" "$ZIP_NAME" --clobber
 
-          # 临时文件保存当前 Release notes
+          # 3. 获取当前 Release notes
           TMP_NOTES=$(mktemp)
           gh release view "$RELEASE_TAG" --json body -q .body > "$TMP_NOTES"
 
-          # 获取本分支的 Changelog
+          # 4. 删除本分支旧日志（锚点 + 下一个 --- 或 EOF）
+          CLEAN_NOTES=$(mktemp)
+          awk -v anchor="$ANCHOR" '
+            BEGIN { skip=0 }
+            $0 ~ anchor { skip=1; next }
+            /^---$/ && skip==1 { skip=0; next }
+            skip==0 { print }
+          ' "$TMP_NOTES" > "$CLEAN_NOTES"
+
+          # 5. 生成本分支 Changelog
           RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
           if [ -z "$RAW_LOG" ]; then
-            CHANGELOG="No changes in the last month."
+            RAW_LOG="No changes in the last month."
           else
             TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
-            if [ "$TOTAL_LINES" -gt 50 ]; then
-              RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
-            fi
-            CHANGELOG="$RAW_LOG"
+            [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
           fi
 
-          # 检查是否已经包含本 commit，避免重复追加
-          if grep -q "$COMMIT" "$TMP_NOTES"; then
-            echo "ℹ️ Commit $COMMIT already included in Release notes, skipping append."
-          else
-            {
-              echo "---"
-              echo "### Branch: ${{ matrix.label }}"
-              echo "- Commit: $COMMIT"
-              echo "- Changelog:"
-              while IFS= read -r line; do
-                # JSON 安全转义
-                ESCAPED_LINE=$(jq -Rn --arg str "$line" '$str')
-                ESCAPED_LINE=${ESCAPED_LINE:1:-1}
-                echo "  $ESCAPED_LINE"
-              done <<< "$CHANGELOG"
-            } >> "$TMP_NOTES"
+          # 6. 追加新日志到 CLEAN_NOTES
+          {
+            echo -e "\n$ANCHOR"
+            echo "### Branch: $BRANCH_LABEL"
+            echo "- **Last Build**: $(date +'%Y-%m-%d %H:%M:%S')"
+            echo "- **Commit**: $COMMIT"
+            echo "- **Changelog:**"
+            echo "$RAW_LOG" | sed 's/^/  /'
+            echo -e "\n---"
+          } >> "$CLEAN_NOTES"
 
-            gh release edit "$RELEASE_TAG" --notes-file "$TMP_NOTES"
-            sleep 1
-          fi
+          # 7. 更新 Release notes（保持 Prerelease）
+          gh release edit "$RELEASE_TAG" --notes-file "$CLEAN_NOTES" --prerelease
 
-          rm -f "$TMP_NOTES"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          rm -f "$TMP_NOTES" "$CLEAN_NOTES"
