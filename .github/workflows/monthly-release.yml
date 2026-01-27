@@ -1,4 +1,4 @@
-name: Monthly Nightly Multi-Release
+name: Monthly Nightly Unified Release
 
 on:
   workflow_dispatch:
@@ -22,9 +22,6 @@ jobs:
           - branch: main-extra/pure-glass
             label: Nightly Main Extra Pure Glass
             filename: lRP-M.E.-Pure-Glass
-          - branch: main-extra/derived
-            label: Nightly Main Extra Derived
-            filename: lRP-M.E.-Derived
 
     steps:
       - name: Checkout branch
@@ -33,24 +30,20 @@ jobs:
           ref: ${{ matrix.branch }}
           fetch-depth: 0
 
-      - name: Process Release (Multi-Release Mode)
+      - name: Process Release (ZIP + Replace Notes)
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
 
-          # 1. 准备变量
-          FULL_DATE=$(date +'%Y%m%d-%H%M%S-%3N')
-          MONTH_TAG="Nightly-$(date +'%Y-%m')"
-          # 为了保留历史记录，每次运行用唯一 Tag
-          UNIQUE_TAG="${MONTH_TAG}-${FULL_DATE}"
-          
+          FULL_DATE_MS=$(date +'%Y-%m-%d-%H%M%S-%3N')
           COMMIT=$(git rev-parse --short HEAD)
-          BRANCH_LABEL="${{ matrix.label }}"
+          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
           ZIP_NAME="${{ matrix.filename }}.zip"
+          BRANCH_LABEL="${{ matrix.label }}"
+          ANCHOR="<!-- ${BRANCH_LABEL// /_}_ANCHOR -->"
 
-          # 2. 生成 ZIP
           echo "ℹ️ Generating ZIP: $ZIP_NAME"
           zip -r -q "$ZIP_NAME" . -x ".git/*" -x "*.zip" -x ".github/*"
           if [ ! -f "$ZIP_NAME" ]; then
@@ -58,7 +51,30 @@ jobs:
             exit 1
           fi
 
-          # 3. 生成 Changelog（最多 50 行）
+          # 1. 确保 Release 存在（Prerelease）
+          set +e
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1
+          if [ $? -ne 0 ]; then
+            echo "ℹ️ Creating new prerelease: $RELEASE_TAG"
+            gh release create "$RELEASE_TAG" \
+              --title "Nightly Build #${{ github.run_number }} ($FULL_DATE_MS)" \
+              --notes "Initial Nightly Build" \
+              --prerelease
+            sleep 2
+          fi
+          set -e
+
+          # 2. 上传 ZIP（覆盖同名文件）
+          gh release upload "$RELEASE_TAG" "$ZIP_NAME" --clobber
+
+          # 3. 获取当前 Body 内容
+          FINAL_NOTES=$(mktemp)
+          # 获取当前 Release 页面已有的文字
+          gh release view "$RELEASE_TAG" --json body -q .body > "$FINAL_NOTES"
+
+          # 4. (已废弃旧的清理逻辑，保持新 Build 页面整洁)
+
+          # 5. 生成本分支 Changelog
           RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
           if [ -z "$RAW_LOG" ]; then
             RAW_LOG="No changes in the last month."
@@ -67,21 +83,19 @@ jobs:
             [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
           fi
 
-          # 4. 构造 Release Notes
-          TMP_NOTES=$(mktemp)
+          # 6. 追加新日志到 FINAL_NOTES
           {
+            echo -e "\n$ANCHOR"
             echo "### Branch: $BRANCH_LABEL"
-            echo "- **Build Time**: $(date +'%Y-%m-%d %H:%M:%S')"
-            echo "- **Commit**: \`$COMMIT\`"
+            echo "- **Last Build**: $FULL_DATE_MS"
+            echo "- **Commit**: $COMMIT"
             echo "- **Changelog:**"
             echo "$RAW_LOG" | sed 's/^/  /'
-          } > "$TMP_NOTES"
+            echo -e "\n---"
+          } >> "$FINAL_NOTES"
 
-          # 5. 创建全新的 Prerelease
-          echo "🚀 Creating distinct prerelease: $UNIQUE_TAG"
-          gh release create "$UNIQUE_TAG" "$ZIP_NAME" \
-            --title "[$BRANCH_LABEL] Build $FULL_DATE" \
-            --notes-file "$TMP_NOTES" \
-            --prerelease
+          # 7. 更新 Release notes 页面
+          gh release edit "$RELEASE_TAG" --notes-file "$FINAL_NOTES" --prerelease
 
-          rm -f "$TMP_NOTES"
+          # 清理临时文件
+          rm -f "$FINAL_NOTES"
