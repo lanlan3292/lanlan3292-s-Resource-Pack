@@ -1,4 +1,4 @@
-name: Monthly Nightly Multi-Branch
+name: Monthly Nightly Unified Release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   release:
-    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
 
     strategy:
@@ -31,89 +30,72 @@ jobs:
           ref: ${{ matrix.branch }}
           fetch-depth: 0
 
-      - name: Set Variables
-        id: vars
+      - name: Process Release (ZIP + Notes)
         shell: bash
         run: |
+          set -e
+
           DATE=$(date +'%Y-%m-%d-%H%M%S')
           COMMIT=$(git rev-parse --short HEAD)
 
-          SAFE_LABEL=$(echo "${{ matrix.filename }}" \
-            | sed 's#[^a-zA-Z0-9]#-#g' \
-            | sed 's/-\+/-/g' \
-            | sed 's/^-//' \
-            | sed 's/-$//')
-          if [ -z "$SAFE_LABEL" ]; then
-            SAFE_LABEL="branch"
-          fi
-          SAFE_LABEL=$(echo "$SAFE_LABEL" | cut -c1-50)
-
           ZIP_NAME="${{ matrix.filename }}-$DATE.zip"
-          TAG_NAME="Nightly-${SAFE_LABEL}-$DATE"
-          RELEASE_NAME="${{ matrix.label }} Nightly Build $DATE"
+          RELEASE_TAG="Nightly-$(date +'%Y-%m')"
 
-          CHANGELOG=$(git log --pretty=format:"%h - %s" --since="1 month ago")
-          if [ -z "$CHANGELOG" ]; then
+          echo "ℹ️ Generating ZIP: $ZIP_NAME"
+          zip -r -q "$ZIP_NAME" . -x ".git/*" -x "*.zip" -x ".github/*"
+          if [ ! -f "$ZIP_NAME" ]; then
+            echo "❌ ZIP file not created"
+            exit 1
+          fi
+
+          # 确保 Release 存在
+          set +e
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1
+          if [ $? -ne 0 ]; then
+            gh release create "$RELEASE_TAG" --title "Monthly Nightly Build $(date +'%Y-%m')" --notes "Initial Release Notes"
+          fi
+          set -e
+
+          # 上传 ZIP（--clobber 覆盖同名文件）
+          gh release upload "$RELEASE_TAG" "$ZIP_NAME" --clobber
+
+          # 临时文件保存当前 Release notes
+          TMP_NOTES=$(mktemp)
+          gh release view "$RELEASE_TAG" --json body -q .body > "$TMP_NOTES"
+
+          # 获取本分支的 Changelog
+          RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
+          if [ -z "$RAW_LOG" ]; then
             CHANGELOG="No changes in the last month."
-          fi
-
-          NOTES_FILE="release_notes_${SAFE_LABEL}_$DATE.md"
-          echo "### Build Info" > "$NOTES_FILE"
-          echo "- Branch: ${{ matrix.branch }}" >> "$NOTES_FILE"
-          echo "- Commit: $COMMIT" >> "$NOTES_FILE"
-          echo "" >> "$NOTES_FILE"
-          echo "### Changelog (Past Month)" >> "$NOTES_FILE"
-          echo "$CHANGELOG" >> "$NOTES_FILE"
-
-          echo "zip=$ZIP_NAME" >> $GITHUB_OUTPUT
-          echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
-          echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
-          echo "notes_file=$NOTES_FILE" >> $GITHUB_OUTPUT
-
-      - name: Create Zip Archive
-        run: |
-          zip -r -q "${{ steps.vars.outputs.zip }}" . -x ".git/*" -x "*.zip" -x ".github/*"
-          if [ ! -f "${{ steps.vars.outputs.zip }}" ]; then
-            echo "❌ Zip file ${{ steps.vars.outputs.zip }} not found, aborting."
-            exit 1
-          fi
-
-      - name: Verify Notes File
-        run: |
-          if [ ! -f "${{ steps.vars.outputs.notes_file }}" ]; then
-            echo "❌ Notes file ${{ steps.vars.outputs.notes_file }} not found, aborting."
-            exit 1
-          fi
-
-      - name: Create Release with Retry
-        run: |
-          RETRIES=3
-          COUNT=0
-          until [ $COUNT -ge $RETRIES ]
-          do
-            if gh release view "${{ steps.vars.outputs.tag }}" >/dev/null 2>&1; then
-              echo "⚠️ Release ${{ steps.vars.outputs.tag }} already exists, skipping creation."
-              break
+          else
+            TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
+            if [ "$TOTAL_LINES" -gt 50 ]; then
+              RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
             fi
-            set +e
-            gh release create "${{ steps.vars.outputs.tag }}" \
-              --title "${{ steps.vars.outputs.release_name }}" \
-              --notes-file "${{ steps.vars.outputs.notes_file }}" \
-              -- "${{ steps.vars.outputs.zip }}"
-            STATUS=$?
-            set -e
-            if [ $STATUS -eq 0 ]; then
-              echo "✅ Release created successfully."
-              break
-            else
-              COUNT=$((COUNT+1))
-              echo "⚠️ Attempt $COUNT failed, retrying in 5s..."
-              sleep 5
-            fi
-          done
-          if [ $COUNT -eq $RETRIES ]; then
-            echo "❌ Release creation failed after $RETRIES attempts."
-            exit 1
+            CHANGELOG="$RAW_LOG"
           fi
+
+          # 检查是否已经包含本 commit，避免重复追加
+          if grep -q "$COMMIT" "$TMP_NOTES"; then
+            echo "ℹ️ Commit $COMMIT already included in Release notes, skipping append."
+          else
+            {
+              echo "---"
+              echo "### Branch: ${{ matrix.label }}"
+              echo "- Commit: $COMMIT"
+              echo "- Changelog:"
+              while IFS= read -r line; do
+                # JSON 安全转义
+                ESCAPED_LINE=$(jq -Rn --arg str "$line" '$str')
+                ESCAPED_LINE=${ESCAPED_LINE:1:-1}
+                echo "  $ESCAPED_LINE"
+              done <<< "$CHANGELOG"
+            } >> "$TMP_NOTES"
+
+            RELEASE_ID=$(gh release view "$RELEASE_TAG" --json id -q .id)
+            gh api -X PATCH "/repos/${GITHUB_REPOSITORY}/releases/$RELEASE_ID" -F body=@"$TMP_NOTES"
+          fi
+
+          rm -f "$TMP_NOTES"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
