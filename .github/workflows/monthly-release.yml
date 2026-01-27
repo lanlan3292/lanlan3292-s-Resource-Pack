@@ -53,6 +53,7 @@ jobs:
           gh release view "$RELEASE_TAG" >/dev/null 2>&1
           if [ $? -ne 0 ]; then
             gh release create "$RELEASE_TAG" --title "Monthly Nightly Build $(date +'%Y-%m')" --notes "Initial Release Notes"
+            sleep 2
           fi
           set -e
 
@@ -92,8 +93,8 @@ jobs:
               done <<< "$CHANGELOG"
             } >> "$TMP_NOTES"
 
-            RELEASE_ID=$(gh release view "$RELEASE_TAG" --json id -q .id)
-            gh api -X PATCH "/repos/${GITHUB_REPOSITORY}/releases/$RELEASE_ID" -F body=@"$TMP_NOTES"
+            gh release edit "$RELEASE_TAG" --notes-file "$TMP_NOTES"
+            sleep 1
           fi
 
           rm -f "$TMP_NOTES"
