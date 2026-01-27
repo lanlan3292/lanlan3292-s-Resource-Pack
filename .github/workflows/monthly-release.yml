@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *'
+    
+permissions:
+  contents: write
 
 jobs:
   release:
@@ -12,33 +15,25 @@ jobs:
     strategy:
       matrix:
         include:
-          # ===== 在这里自定义每个分支 =====
           - branch: main
             label: stable
             filename: test
-          # =================================
 
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ matrix.branch }}
 
-      - name: Generate names
-        id: vars
+      - id: vars
         run: |
           DATE=$(date +'%Y-%m')
-          echo "date=$DATE" >> $GITHUB_OUTPUT
           echo "zip=${{ matrix.filename }}-$DATE.zip" >> $GITHUB_OUTPUT
           echo "tag=${{ matrix.label }}-$DATE" >> $GITHUB_OUTPUT
           echo "release_name=${{ matrix.label }} Release $DATE" >> $GITHUB_OUTPUT
 
-      - name: Zip project
-        run: |
-          zip -r "${{ steps.vars.outputs.zip }}" . -x ".git/*"
+      - run: zip -r "${{ steps.vars.outputs.zip }}" . -x ".git/*"
 
-      - name: Create Release and Upload
-        uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.vars.outputs.tag }}
           name: ${{ steps.vars.outputs.release_name }}
