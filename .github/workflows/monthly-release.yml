@@ -38,7 +38,7 @@ jobs:
           DATE=$(date +'%Y-%m-%d-%H%M%S')
           COMMIT=$(git rev-parse --short HEAD)
 
-          ZIP_NAME="${{ matrix.filename }}-$DATE.zip"
+          ZIP_NAME="${{ matrix.filename }}.zip"
           RELEASE_TAG="Nightly-$(date +'%Y-%m')"
 
           echo "ℹ️ Generating ZIP: $ZIP_NAME"
