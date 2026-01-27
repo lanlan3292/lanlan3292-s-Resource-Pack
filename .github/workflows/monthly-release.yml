@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   release:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
 
     strategy:
@@ -34,11 +35,9 @@ jobs:
         id: vars
         shell: bash
         run: |
-          # 时间戳，保证同一天多次触发不冲突
           DATE=$(date +'%Y-%m-%d-%H%M%S')
           COMMIT=$(git rev-parse --short HEAD)
 
-          # 安全标签处理：替换非法字符，合并连续 '-', 去掉开头结尾 '-', 空标签填充, 限制长度
           SAFE_LABEL=$(echo "${{ matrix.filename }}" \
             | sed 's#[^a-zA-Z0-9]#-#g' \
             | sed 's/-\+/-/g' \
@@ -53,24 +52,19 @@ jobs:
           TAG_NAME="Nightly-${SAFE_LABEL}-$DATE"
           RELEASE_NAME="${{ matrix.label }} Nightly Build $DATE"
 
-          # 最近一个月 changelog
           CHANGELOG=$(git log --pretty=format:"%h - %s" --since="1 month ago")
           if [ -z "$CHANGELOG" ]; then
             CHANGELOG="No changes in the last month."
           fi
 
-          # 生成 Release notes 文件，here-doc 左对齐
           NOTES_FILE="release_notes_${SAFE_LABEL}_$DATE.md"
-          cat <<EOF > "$NOTES_FILE"
-### Build Info
-- Branch: ${{ matrix.branch }}
-- Commit: $COMMIT
+          echo "### Build Info" > "$NOTES_FILE"
+          echo "- Branch: ${{ matrix.branch }}" >> "$NOTES_FILE"
+          echo "- Commit: $COMMIT" >> "$NOTES_FILE"
+          echo "" >> "$NOTES_FILE"
+          echo "### Changelog (Past Month)" >> "$NOTES_FILE"
+          echo "$CHANGELOG" >> "$NOTES_FILE"
 
-### Changelog (Past Month)
-$CHANGELOG
-EOF
-
-          # 输出变量到 GITHUB_OUTPUT
           echo "zip=$ZIP_NAME" >> $GITHUB_OUTPUT
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
@@ -79,7 +73,6 @@ EOF
       - name: Create Zip Archive
         run: |
           zip -r -q "${{ steps.vars.outputs.zip }}" . -x ".git/*" -x "*.zip" -x ".github/*"
-          # 验证 ZIP 是否生成成功
           if [ ! -f "${{ steps.vars.outputs.zip }}" ]; then
             echo "❌ Zip file ${{ steps.vars.outputs.zip }} not found, aborting."
             exit 1
