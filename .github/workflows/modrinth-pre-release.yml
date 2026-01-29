@@ -19,7 +19,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          JSON=$(gh release view --json tagName,name,body)
+          JSON=$(gh release view --include-pre-releases --json tagName,name,body)
           echo "tag=$(echo "$JSON" | jq -r .tagName)" >> $GITHUB_OUTPUT
           echo "name=$(echo "$JSON" | jq -r .name)" >> $GITHUB_OUTPUT
           echo "body<<EOF" >> $GITHUB_OUTPUT
@@ -50,6 +50,7 @@ jobs:
           name: ${{ steps.release_info.outputs.name }}
           version: ${{ steps.release_info.outputs.tag }}
           changelog: ${{ steps.release_info.outputs.body }}
+          channel: alpha
           loaders: |-
             minecraft
           game-versions: |-
