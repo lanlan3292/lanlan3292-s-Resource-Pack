@@ -52,26 +52,35 @@ jobs:
       - name: Auto-generate File Mappings
         id: mapper
         run: |
-          # 1. 处理 Files 列表
-          echo "files<<FILES_EOF" >> $GITHUB_OUTPUT
-          for f in dist/*.zip; do
-            [ -f "$f" ] || continue
-            echo "dist/$(basename "$f")" >> $GITHUB_OUTPUT
-          done
-          echo "FILES_EOF" >> $GITHUB_OUTPUT
+          FILES=""
+          TYPES=""
 
-          # 2. 处理 Types 列表
-          echo "types<<TYPES_EOF" >> $GITHUB_OUTPUT
           for f in dist/*.zip; do
             [ -f "$f" ] || continue
-            CLEAN_PATH="dist/$(basename "$f")"
-            if [[ "$f" == *"Main"* ]]; then
-              echo "$CLEAN_PATH=required-resource-pack" >> $GITHUB_OUTPUT
+            
+            NAME=$(basename "$f")
+            CPATH="dist/$NAME"
+            
+            # 确定类型
+            if [[ "$NAME" == *"Main"* ]]; then
+              TYPE="required-resource-pack"
             else
-              echo "$CLEAN_PATH=optional-resource-pack" >> $GITHUB_OUTPUT
+              TYPE="optional-resource-pack"
+            fi
+
+            # 拼接字符串 (使用空格分隔，这是最不容易出错的)
+            if [ -z "$FILES" ]; then
+              FILES="$CPATH"
+              TYPES="$CPATH=$TYPE"
+            else
+              FILES="$FILES $CPATH"
+              TYPES="$TYPES $CPATH=$TYPE"
             fi
           done
-          echo "TYPES_EOF" >> $GITHUB_OUTPUT
+
+          # 输出纯净的单行字符串
+          echo "files=$FILES" >> $GITHUB_OUTPUT
+          echo "types=$TYPES" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
