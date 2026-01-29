@@ -52,35 +52,31 @@ jobs:
       - name: Auto-generate File Mappings
         id: mapper
         run: |
-          FILES=""
-          TYPES=""
+          # 清空/创建临时文件
+          : > files_list.txt
+          : > types_list.txt
 
           for f in dist/*.zip; do
             [ -f "$f" ] || continue
+            CPATH="dist/$(basename "$f")"
             
-            NAME=$(basename "$f")
-            CPATH="dist/$NAME"
+            echo "$CPATH" >> files_list.txt
             
-            # 确定类型
-            if [[ "$NAME" == *"Main"* ]]; then
-              TYPE="required-resource-pack"
+            if [[ "$f" == *"Main"* ]]; then
+              echo "$CPATH=required-resource-pack" >> types_list.txt
             else
-              TYPE="optional-resource-pack"
-            fi
-
-            # 拼接字符串 (使用空格分隔，这是最不容易出错的)
-            if [ -z "$FILES" ]; then
-              FILES="$CPATH"
-              TYPES="$CPATH=$TYPE"
-            else
-              FILES="$FILES $CPATH"
-              TYPES="$TYPES $CPATH=$TYPE"
+              echo "$CPATH=optional-resource-pack" >> types_list.txt
             fi
           done
 
-          # 输出纯净的单行字符串
-          echo "files=$FILES" >> $GITHUB_OUTPUT
-          echo "types=$TYPES" >> $GITHUB_OUTPUT
+          # 使用这种方式写入多行，注意标识符唯一且前后无空格
+          echo "files<<DELIM" >> $GITHUB_OUTPUT
+          cat files_list.txt >> $GITHUB_OUTPUT
+          echo "DELIM" >> $GITHUB_OUTPUT
+
+          echo "types<<DELIM2" >> $GITHUB_OUTPUT
+          cat types_list.txt >> $GITHUB_OUTPUT
+          echo "DELIM2" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
