@@ -45,7 +45,7 @@ jobs:
 
           FULL_DATE_MS=$(date +'%Y-%m-%d-%H%M%S-%3N')
           COMMIT=$(git rev-parse --short HEAD)
-          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+          RELEASE_TAG="Nightly-$(date +'%Y-%m-%d-%H')-Build-${{ github.run_number }}"
           ZIP_NAME="${{ matrix.filename }}.zip"
           BRANCH_LABEL="${{ matrix.label }}"
           ANCHOR="<!-- ${BRANCH_LABEL// /_}_ANCHOR -->"
@@ -235,7 +235,7 @@ jobs:
         run: |
           set -e
 
-          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+          RELEASE_TAG="Nightly-$(date +'%Y-%m-%d-%H')-Build-${{ github.run_number }}"
           if [ ! -f "tmp/lRP-Main-All.zip" ]; then
             echo "❌ lRP-Main-All.zip was not created"
             exit 1
