@@ -13,6 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Wait for Release Assets
+        if: github.event_name == 'release'
+        run: |
+          echo "Detected release trigger. Waiting for 3 minutes to ensure assets are ready..."
+          sleep 180
+
       # 1. 获取最新 Release 的元数据 (修正 gh 命令问题)
       - name: Get Latest Release Info
         id: release_info
