@@ -84,12 +84,24 @@ jobs:
           # 查找最近一次 Nightly 发布（排除当前发布）
           PREV_RELEASE=$(gh release list --limit 100 --json name,publishedAt -q ".[] | select(.name | startswith(\"Nightly-\") and .name != \"$RELEASE_TAG\") | sort_by(.publishedAt) | .[-1] | .name")
           PREV_COMMIT=""
+          FALLBACK_NOTE=""
           if [ -n "$PREV_RELEASE" ]; then
             PREV_BODY=$(gh release view "$PREV_RELEASE" --json body -q .body)
-            PREV_COMMIT=$(echo "$PREV_BODY" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+            # 仅在本分支锚点（ANCHOR）区域中查找 Commit，避免抓到其他分支的提交
+            ANCHOR_ESCAPED=$(printf '%s' "$ANCHOR" | sed 's/[\/&]/\\&/g')
+            SECTION=$(printf '%s' "$PREV_BODY" | sed -n "/$ANCHOR_ESCAPED/,/---/p" )
+            PREV_COMMIT=$(echo "$SECTION" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+
+            # 如果在本分支区域未找到，再回退到全局搜索（并记录回退原因）
+            if [ -z "$PREV_COMMIT" ]; then
+              PREV_COMMIT=$(echo "$PREV_BODY" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+              # 标记为从其他分部找到（仅用于调试/日志），不会写入 changelog
+              PREV_COMMIT_FALLBACK="true"
+            fi
           fi
 
           if [ -n "$PREV_COMMIT" ]; then
+            FALLBACK_NOTE=""
             RAW_LOG=$(git log --pretty=format:"%h - %s" "$PREV_COMMIT"..HEAD | head -n 50)
             if [ -z "$RAW_LOG" ]; then
               RAW_LOG="No new changes since previous Nightly ($PREV_RELEASE)."
@@ -98,7 +110,7 @@ jobs:
               [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
             fi
           else
-            # 回退到按最近 1 个月的提交
+            # 回退到按最近 1 个月的提交（将在 Changelog 尾部标注）
             RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
             if [ -z "$RAW_LOG" ]; then
               RAW_LOG="No changes in the last month."
@@ -106,6 +118,7 @@ jobs:
               TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
               [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
             fi
+            FALLBACK_NOTE="- **Note**: Showing changes from the last 1 month because no previous Nightly release (for this branch) was found."
           fi
 
           # 6. 追加新日志到 FINAL_NOTES
@@ -122,6 +135,8 @@ jobs:
             [ -n "$SINCE_LINE" ] && echo "$SINCE_LINE"
             echo "- **Changelog:**"
             echo "$RAW_LOG" | sed 's/^/  /'
+            # 如果使用了回退日志，尾部标注说明
+            [ -n "$FALLBACK_NOTE" ] && echo "" && echo "  $FALLBACK_NOTE"
             echo -e "\n---"
           } >> "$FINAL_NOTES"
 
