@@ -39,7 +39,7 @@ jobs:
       - name: Process Release (ZIP + Replace Notes)
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MODRINTH_GITHUB_TOKEN }}
         run: |
           set -e
 
