@@ -52,39 +52,34 @@ jobs:
       - name: Auto-generate File Mappings
         id: mapper
         run: |
-          : > files.txt
-          : > types.txt
+          FILES_ARR=()
+          TYPES_ARR=()
 
           for f in dist/*.zip; do
             [ -f "$f" ] || continue
             
-            # 关键修正：强制构造为 ./dist/... 格式
-            REAL_PATH="./$f"
+            REAL_PATH="dist/$(basename "$f")"
             
-            echo "$REAL_PATH" >> files.txt
+            FILES_ARR+=("$REAL_PATH")
             
-            # 这里对比的是原始文件名 $f，但写入 types.txt 的 Key 必须是 $REAL_PATH
             if [[ "$f" == *"Main"* ]]; then
-              echo "$REAL_PATH=required-resource-pack" >> types.txt
+              TYPES_ARR+=("$REAL_PATH=required-resource-pack")
             else
-              echo "$REAL_PATH=optional-resource-pack" >> types.txt
+              TYPES_ARR+=("$REAL_PATH=optional-resource-pack")
             fi
           done
 
-          # 验证输出 (请在日志里核对这里输出的路径是不是带 ./dist/ )
-          echo "--- Files List ---"
-          cat files.txt
-          echo "--- Types Mapping ---"
-          cat types.txt
+          # 将数组转化为逗号分隔的单行字符串
+          FILES_STR=$(IFS=,; echo "${FILES_ARR[*]}")
+          TYPES_STR=$(IFS=,; echo "${TYPES_ARR[*]}")
 
-          # 导出变量，确保无空格
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          cat files.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "--- Debug Output ---"
+          echo "Files: $FILES_STR"
+          echo "Types: $TYPES_STR"
 
-          echo "types<<EOF" >> $GITHUB_OUTPUT
-          cat types.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # 写入 Output (单行输出，不使用 EOF)
+          echo "files=$FILES_STR" >> $GITHUB_OUTPUT
+          echo "types=$TYPES_STR" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
