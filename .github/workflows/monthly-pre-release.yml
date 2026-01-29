@@ -157,13 +157,13 @@ jobs:
           rm -f "$FINAL_NOTES"
 
   # ---------------------------------------------------------------------------
-  # Aggregate job: create lRP-Main-All.zip with Extra/ containing all M.E. zip assets
+  # Aggregate job: create lRP-Main-All.zip with extra/ containing all M.E. zip assets
   # Runs after all matrix 'release' jobs complete (needs: release)
   # ---------------------------------------------------------------------------
   aggregate:
     runs-on: ubuntu-latest
     needs: release
-    if: always()
+    if: success()
 
     steps:
       - name: Download release ZIP assets
@@ -174,7 +174,7 @@ jobs:
           set -e
 
           # Prefer tag, but fallback to searching by release title (some releases were created with title-only format)
-          EXPECTED_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+          EXPECTED_TAG="Nightly-$(date +'%Y-%m-%d-%H')-Build-${{ github.run_number }}"
           echo "ℹ️ Looking for release tag $EXPECTED_TAG"
           if gh release view --repo "$GITHUB_REPOSITORY" "$EXPECTED_TAG" >/dev/null 2>&1; then
             RELEASE_TAG="$EXPECTED_TAG"
@@ -212,16 +212,16 @@ jobs:
           mkdir work
           unzip -q lRP-Main.zip -d work
 
-          echo "ℹ️ Creating Extra/ and copying M.E. zips"
-          mkdir -p work/Extra
+          echo "ℹ️ Creating extra/ and copying M.E. zips"
+          mkdir -p work/extra
           shopt -s nullglob || true
           for f in *.zip; do
             case "$f" in
               lRP-Main-All.zip|lRP-Main.zip) continue;;
             esac
             if [[ "$f" == *"M.E."* ]]; then
-              echo "  - Adding $f to Extra/"
-              cp "$f" work/Extra/
+              echo "  - Adding $f to extra/"
+              cp "$f" work/extra/
             fi
           done
 
