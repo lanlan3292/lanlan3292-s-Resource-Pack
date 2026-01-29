@@ -104,20 +104,20 @@ jobs:
           done
 
           if [ -n "$PREV_COMMIT" ]; then
-            RAW_LOG=$(git log --pretty=format:"%h - %s" "$PREV_COMMIT"..HEAD | head -n 50)
+            RAW_LOG=$(git log --pretty=format:"%h - %s" "$PREV_COMMIT"..HEAD | head -n 50 || true)
             if [ -z "$RAW_LOG" ]; then
               RAW_LOG="No new changes since previous Nightly ($PREV_RELEASE)."
             else
-              TOTAL_LINES=$(git log --pretty=format:"%h" "$PREV_COMMIT"..HEAD | wc -l)
+              TOTAL_LINES=$(git log --pretty=format:"%h" "$PREV_COMMIT"..HEAD | wc -l || true)
               [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
             fi
           else
             # 未找到任何包含本分支 ANCHOR 的 Nightly：回退到按最近 1 个月的提交（将在 Changelog 尾部标注）
-            RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
+            RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50 || true)
             if [ -z "$RAW_LOG" ]; then
               RAW_LOG="No changes in the last month."
             else
-              TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
+              TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l || true)
               [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
             fi
             FALLBACK_NOTE="- **Note**: Showing changes from the last 1 month because no previous Nightly release (for this branch) was found."
