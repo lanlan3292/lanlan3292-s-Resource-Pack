@@ -173,10 +173,23 @@ jobs:
         run: |
           set -e
 
-          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
-
-          echo "ℹ️ Ensuring release $RELEASE_TAG exists"
-          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || (echo "Release $RELEASE_TAG not found" && exit 1)
+          # Prefer tag, but fallback to searching by release title (some releases were created with title-only format)
+          EXPECTED_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+          echo "ℹ️ Looking for release tag $EXPECTED_TAG"
+          if gh release view "$EXPECTED_TAG" >/dev/null 2>&1; then
+            RELEASE_TAG="$EXPECTED_TAG"
+          else
+            echo "⚠️ Release tag $EXPECTED_TAG not found; searching by title 'Nightly Build #${{ github.run_number }}'"
+            # Find the first release whose title starts with 'Nightly Build #<run_number>' and take its tag
+            RELEASE_TAG=$(gh release list --limit 100 --json tagName,name -q ".[] | select(.name | test(\"^Nightly Build #${{ github.run_number }}\")) | .tagName" | head -n 1)
+            if [ -z "$RELEASE_TAG" ]; then
+              echo "❌ No matching release found by tag or title"
+              echo "Available Nightly releases (name -> tag):"
+              gh release list --limit 20 --json tagName,name -q '.[] | select(.name | test("^Nightly Build")) | .name + " -> " + .tagName' || true
+              exit 1
+            fi
+            echo "ℹ️ Found release tag by title: $RELEASE_TAG"
+          fi
 
           echo "ℹ️ Downloading ZIP assets from release"
           mkdir -p tmp && cd tmp
