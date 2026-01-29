@@ -92,4 +92,5 @@ jobs:
           loaders: minecraft
           game-versions: 1.21.x
           files: ${{ steps.mapper.outputs.files }}
+          primary-file: lRP-Main.zip
           file-types: ${{ steps.mapper.outputs.types }}
