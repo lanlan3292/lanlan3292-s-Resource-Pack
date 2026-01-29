@@ -46,7 +46,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           mkdir -p ./dist
-          gh release download ${{ steps.release_info.outputs.tag }} --dir ./dist --pattern "lRP-Main.zip"
+          gh release download ${{ steps.release_info.outputs.tag }} --dir ./dist --pattern "lRP-Main-All.zip"
 
       # 3. 准备文件路径
       - name: Auto-generate File Mappings
@@ -94,5 +94,5 @@ jobs:
             25w14craftmine
             1.21.x
           files: ${{ steps.mapper.outputs.files }}
-          primary-file: lRP-Main.zip
+          primary-file: lRP-Main-All.zip
           file-types: ${{ steps.mapper.outputs.types }}

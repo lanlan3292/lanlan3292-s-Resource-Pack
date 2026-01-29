@@ -155,3 +155,80 @@ jobs:
 
           # 清理临时文件
           rm -f "$FINAL_NOTES"
+
+  # ---------------------------------------------------------------------------
+  # Aggregate job: create lRP-Main-All.zip with Extra/ containing all M.E. zip assets
+  # Runs after all matrix 'release' jobs complete (needs: release)
+  # ---------------------------------------------------------------------------
+  aggregate:
+    runs-on: ubuntu-latest
+    needs: release
+    if: always()
+
+    steps:
+      - name: Download release ZIP assets
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+
+          echo "ℹ️ Ensuring release $RELEASE_TAG exists"
+          gh release view "$RELEASE_TAG" >/dev/null 2>&1 || (echo "Release $RELEASE_TAG not found" && exit 1)
+
+          echo "ℹ️ Downloading ZIP assets from release"
+          mkdir -p tmp && cd tmp
+          # download all zips (we will pick lRP-Main.zip and any M.E. zips)
+          gh release download "$RELEASE_TAG" --pattern "*.zip" || true
+
+      - name: Build lRP-Main-All.zip
+        shell: bash
+        run: |
+          set -e
+
+          cd tmp || exit 1
+
+          if [ ! -f "lRP-Main.zip" ]; then
+            echo "❌ lRP-Main.zip not found in release assets"
+            exit 1
+          fi
+
+          echo "ℹ️ Unpacking lRP-Main.zip"
+          mkdir work
+          unzip -q lRP-Main.zip -d work
+
+          echo "ℹ️ Creating Extra/ and copying M.E. zips"
+          mkdir -p work/Extra
+          shopt -s nullglob || true
+          for f in *.zip; do
+            case "$f" in
+              lRP-Main-All.zip|lRP-Main.zip) continue;;
+            esac
+            if [[ "$f" == *"M.E."* ]]; then
+              echo "  - Adding $f to Extra/"
+              cp "$f" work/Extra/
+            fi
+          done
+
+          echo "ℹ️ Creating lRP-Main-All.zip"
+          (cd work && zip -r -q ../lRP-Main-All.zip .)
+
+      - name: Upload lRP-Main-All.zip to release
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          RELEASE_TAG="Nightly-$(date +'%Y-%m')-Build-${{ github.run_number }}"
+          if [ ! -f "tmp/lRP-Main-All.zip" ]; then
+            echo "❌ lRP-Main-All.zip was not created"
+            exit 1
+          fi
+
+          echo "ℹ️ Uploading lRP-Main-All.zip to $RELEASE_TAG"
+          gh release upload "$RELEASE_TAG" tmp/lRP-Main-All.zip --clobber
+
+          echo "✅ lRP-Main-All.zip uploaded"
