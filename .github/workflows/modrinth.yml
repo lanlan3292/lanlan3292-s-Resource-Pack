@@ -65,11 +65,12 @@ jobs:
           # 3. 生成类型列表字符串
           types_list = []
           for f in files:
-              # 注意：这里我们使用完整路径作为 Key，确保匹配
-              if "Main" in os.path.basename(f):
-                  types_list.append(f"{f}=required-resource-pack")
+              # Use basename (name only) for file-types mapping — the action expects names, not paths
+              name = os.path.basename(f)
+              if "Main" in name:
+                  types_list.append(f"{name}=required-resource-pack")
               else:
-                  types_list.append(f"{f}=optional-resource-pack")
+                  types_list.append(f"{name}=optional-resource-pack")
           
           types_str = "\n".join(types_list)
 
