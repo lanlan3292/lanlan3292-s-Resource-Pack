@@ -51,32 +51,32 @@ jobs:
       # 3. 准备文件路径
       - name: Auto-generate File Mappings
         id: mapper
+        shell: python
         run: |
-          # 清空/创建临时文件
-          : > files_list.txt
-          : > types_list.txt
+          import glob
+          import os
 
-          for f in dist/*.zip; do
-            [ -f "$f" ] || continue
-            CPATH="dist/$(basename "$f")"
-            
-            echo "$CPATH" >> files_list.txt
-            
-            if [[ "$f" == *"Main"* ]]; then
-              echo "$CPATH=required-resource-pack" >> types_list.txt
-            else
-              echo "$CPATH=optional-resource-pack" >> types_list.txt
-            fi
-          done
+          # 1. 获取所有 zip 文件
+          files = sorted(glob.glob("dist/*.zip"))
+          
+          # 2. 生成文件列表字符串 (使用 \n 连接)
+          files_str = "\n".join(files)
+          
+          # 3. 生成类型列表字符串
+          types_list = []
+          for f in files:
+              # 注意：这里我们使用完整路径作为 Key，确保匹配
+              if "Main" in os.path.basename(f):
+                  types_list.append(f"{f}=required-resource-pack")
+              else:
+                  types_list.append(f"{f}=optional-resource-pack")
+          
+          types_str = "\n".join(types_list)
 
-          # 使用这种方式写入多行，注意标识符唯一且前后无空格
-          echo "files<<DELIM" >> $GITHUB_OUTPUT
-          cat files_list.txt >> $GITHUB_OUTPUT
-          echo "DELIM" >> $GITHUB_OUTPUT
-
-          echo "types<<DELIM2" >> $GITHUB_OUTPUT
-          cat types_list.txt >> $GITHUB_OUTPUT
-          echo "DELIM2" >> $GITHUB_OUTPUT
+          # 4. 写入 GITHUB_OUTPUT (使用唯一的分隔符)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as fh:
+              fh.write(f"files<<PYTHON_EOF\n{files_str}\nPYTHON_EOF\n")
+              fh.write(f"types<<PYTHON_EOF\n{types_str}\nPYTHON_EOF\n")
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
