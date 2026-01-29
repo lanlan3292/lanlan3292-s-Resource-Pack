@@ -70,7 +70,11 @@ jobs:
             minecraft
           game-versions: |-
             1.21.x
-          files: ${{ steps.paths.outputs.files }}
+          files: |-
+            ./dist/lRP-Main.zip
+            ./dist/lRP-M.E.-Pure-Glass.zip
+            ./dist/lRP-M.E.-Derived.zip
+            ./dist/lRP-M.E.-C.R.I.zip
           file-types: |-
             ./dist/lRP-Main.zip=required-resource-pack
             ./dist/lRP-M.E.-Pure-Glass.zip=optional-resource-pack
