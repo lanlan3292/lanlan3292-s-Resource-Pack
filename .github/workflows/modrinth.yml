@@ -49,11 +49,41 @@ jobs:
           gh release download ${{ steps.release_info.outputs.tag }} --dir ./dist --pattern "*.zip"
 
       # 3. 准备文件路径
-      - name: Prepare File Paths
-        id: paths
+      - name: Auto-generate File Mappings
+        id: mapper
         run: |
+          : > files.txt
+          : > types.txt
+
+          for f in dist/*.zip; do
+            [ -f "$f" ] || continue
+            
+            # 关键修正：强制构造为 ./dist/... 格式
+            REAL_PATH="./$f"
+            
+            echo "$REAL_PATH" >> files.txt
+            
+            # 这里对比的是原始文件名 $f，但写入 types.txt 的 Key 必须是 $REAL_PATH
+            if [[ "$f" == *"Main"* ]]; then
+              echo "$REAL_PATH=required-resource-pack" >> types.txt
+            else
+              echo "$REAL_PATH=optional-resource-pack" >> types.txt
+            fi
+          done
+
+          # 验证输出 (请在日志里核对这里输出的路径是不是带 ./dist/ )
+          echo "--- Files List ---"
+          cat files.txt
+          echo "--- Types Mapping ---"
+          cat types.txt
+
+          # 导出变量，确保无空格
           echo "files<<EOF" >> $GITHUB_OUTPUT
-          ls dist/*.zip | sed 's|^dist/|./dist/|' >> $GITHUB_OUTPUT
+          cat files.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo "types<<EOF" >> $GITHUB_OUTPUT
+          cat types.txt >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
@@ -66,17 +96,7 @@ jobs:
           version: ${{ steps.release_info.outputs.tag }}
           changelog: ${{ steps.release_info.outputs.body }}
           channel: ${{ steps.release_info.outputs.channel }}
-          loaders: |-
-            minecraft
-          game-versions: |-
-            1.21.x
-          files: |-
-            dist/lRP-Main.zip
-            dist/lRP-M.E.-Pure-Glass.zip
-            dist/lRP-M.E.-Derived.zip
-            dist/lRP-M.E.-C.R.I.zip
-          file-types: |-
-            dist/lRP-Main.zip=required-resource-pack
-            dist/lRP-M.E.-Pure-Glass.zip=optional-resource-pack
-            dist/lRP-M.E.-Derived.zip=optional-resource-pack
-            dist/lRP-M.E.-C.R.I.zip=optional-resource-pack
+          loaders: minecraft
+          game-versions: 1.21.x
+          files: ${{ steps.mapper.outputs.files }}
+          file-types: ${{ steps.mapper.outputs.types }}
