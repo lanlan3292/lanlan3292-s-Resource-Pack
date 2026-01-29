@@ -13,20 +13,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 1. 获取最新 Release 的元数据
+      # 1. 获取最新 Release 的元数据 (修正 gh 命令问题)
       - name: Get Latest Release Info
         id: release_info
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          JSON=$(gh release view --include-pre-releases --json tagName,name,body)
+          # 使用 list 获取第一个出现的 tag (包含预览版)
+          LATEST_TAG=$(gh release list --limit 1 | awk '{print $(NF-1)}')
+          
+          # 获取该特定 Tag 的详细 JSON 信息
+          JSON=$(gh release view "$LATEST_TAG" --json tagName,name,body,isPrerelease)
+          
           echo "tag=$(echo "$JSON" | jq -r .tagName)" >> $GITHUB_OUTPUT
           echo "name=$(echo "$JSON" | jq -r .name)" >> $GITHUB_OUTPUT
+          
+          # 自动判断发布频道：如果是预览版设为 alpha，否则为 release
+          IS_PRERELEASE=$(echo "$JSON" | jq -r .isPrerelease)
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "channel=alpha" >> $GITHUB_OUTPUT
+          else
+            echo "channel=release" >> $GITHUB_OUTPUT
+          fi
+          
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "$JSON" | jq -r .body >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      # 2. 下载附件到本地 dist 目录
+      # 2. 下载附件
       - name: Download Assets
         env:
           GH_TOKEN: ${{ github.token }}
@@ -34,7 +48,7 @@ jobs:
           mkdir -p ./dist
           gh release download ${{ steps.release_info.outputs.tag }} --dir ./dist --pattern "*.zip"
 
-      # 3. 准备本地文件路径列表（防弹处理：处理空格、特殊字符、统一路径格式）
+      # 3. 准备文件路径
       - name: Prepare File Paths
         id: paths
         run: |
@@ -50,7 +64,7 @@ jobs:
           name: ${{ steps.release_info.outputs.name }}
           version: ${{ steps.release_info.outputs.tag }}
           changelog: ${{ steps.release_info.outputs.body }}
-          channel: alpha
+          channel: ${{ steps.release_info.outputs.channel }}
           loaders: |-
             minecraft
           game-versions: |-
