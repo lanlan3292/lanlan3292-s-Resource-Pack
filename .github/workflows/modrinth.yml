@@ -52,31 +52,26 @@ jobs:
       - name: Auto-generate File Mappings
         id: mapper
         run: |
-          # 初始化 Output 的起始标记
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          echo "types<<EOF" >> $GITHUB_OUTPUT
-
-          # 循环处理文件
+          # 1. 处理 Files 列表
+          echo "files<<FILES_EOF" >> $GITHUB_OUTPUT
           for f in dist/*.zip; do
             [ -f "$f" ] || continue
-            
-            # 去掉路径前的 ./ 保持干净，只保留 dist/filename.zip
+            echo "dist/$(basename "$f")" >> $GITHUB_OUTPUT
+          done
+          echo "FILES_EOF" >> $GITHUB_OUTPUT
+
+          # 2. 处理 Types 列表
+          echo "types<<TYPES_EOF" >> $GITHUB_OUTPUT
+          for f in dist/*.zip; do
+            [ -f "$f" ] || continue
             CLEAN_PATH="dist/$(basename "$f")"
-            
-            # 1. 写入 files 列表
-            echo "$CLEAN_PATH" >> $GITHUB_OUTPUT
-            
-            # 2. 逻辑判断并写入 types 列表
             if [[ "$f" == *"Main"* ]]; then
               echo "$CLEAN_PATH=required-resource-pack" >> $GITHUB_OUTPUT
             else
               echo "$CLEAN_PATH=optional-resource-pack" >> $GITHUB_OUTPUT
             fi
           done
-
-          # 闭合 EOF 标记（注意：这里不加任何额外空格或换行）
-          echo "EOF" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "TYPES_EOF" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
