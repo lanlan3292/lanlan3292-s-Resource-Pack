@@ -52,8 +52,9 @@ jobs:
       - name: Prepare File Paths
         id: paths
         run: |
-          FILES_STRING=$(printf "'./dist/%s' " $(ls dist/*.zip | xargs -n1 basename))
-          echo "files=$FILES_STRING" >> $GITHUB_OUTPUT
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          ls dist/*.zip | sed 's|^dist/|./dist/|' >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       # 4. 上传到 Modrinth
       - name: Upload to Modrinth
