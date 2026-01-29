@@ -17,16 +17,16 @@ jobs:
       matrix:
         include:
           - branch: main
-            label: Nightly Main
+            label: Main
             filename: lRP-Main
           - branch: main-extra/pure-glass
-            label: Nightly Main Extra Pure Glass
+            label: Main Extra Pure Glass
             filename: lRP-M.E.-Pure-Glass
           - branch: main-extra/derived
-            label: Nightly Main Extra Derived
+            label: Main Extra Derived
             filename: lRP-M.E.-Derived
           - branch: main-extra/C.R.I
-            label: Nightly Main Extra Crop Ready Indicator
+            label: Main Extra Crop Ready Indicator
             filename: lRP-M.E.-C.R.I
 
     steps:
@@ -80,21 +80,46 @@ jobs:
 
           # 4. (已废弃旧的清理逻辑，保持新 Build 页面整洁)
 
-          # 5. 生成本分支 Changelog
-          RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
-          if [ -z "$RAW_LOG" ]; then
-            RAW_LOG="No changes in the last month."
+          # 5. 生成本分支 Changelog：仅包含自上次 Nightly Pre-Release 之后的新提交
+          # 查找最近一次 Nightly 发布（排除当前发布）
+          PREV_RELEASE=$(gh release list --limit 100 --json name,publishedAt -q ".[] | select(.name | startswith(\"Nightly-\") and .name != \"$RELEASE_TAG\") | sort_by(.publishedAt) | .[-1] | .name")
+          PREV_COMMIT=""
+          if [ -n "$PREV_RELEASE" ]; then
+            PREV_BODY=$(gh release view "$PREV_RELEASE" --json body -q .body)
+            PREV_COMMIT=$(echo "$PREV_BODY" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+          fi
+
+          if [ -n "$PREV_COMMIT" ]; then
+            RAW_LOG=$(git log --pretty=format:"%h - %s" "$PREV_COMMIT"..HEAD | head -n 50)
+            if [ -z "$RAW_LOG" ]; then
+              RAW_LOG="No new changes since previous Nightly ($PREV_RELEASE)."
+            else
+              TOTAL_LINES=$(git log --pretty=format:"%h" "$PREV_COMMIT"..HEAD | wc -l)
+              [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
+            fi
           else
-            TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
-            [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
+            # 回退到按最近 1 个月的提交
+            RAW_LOG=$(git log --pretty=format:"%h - %s" --since="1 month ago" | head -n 50)
+            if [ -z "$RAW_LOG" ]; then
+              RAW_LOG="No changes in the last month."
+            else
+              TOTAL_LINES=$(git log --pretty=format:"%h" --since="1 month ago" | wc -l)
+              [ "$TOTAL_LINES" -gt 50 ] && RAW_LOG="$RAW_LOG"$'\n'"... and $((TOTAL_LINES - 50)) more changes."
+            fi
           fi
 
           # 6. 追加新日志到 FINAL_NOTES
+          if [ -n "$PREV_RELEASE" ]; then
+            SINCE_LINE="- **Since**: $PREV_RELEASE"
+          else
+            SINCE_LINE=""
+          fi
           {
             echo -e "\n$ANCHOR"
             echo "### Branch: $BRANCH_LABEL"
             echo "- **Last Build**: $FULL_DATE_MS"
             echo "- **Commit**: $COMMIT"
+            [ -n "$SINCE_LINE" ] && echo "$SINCE_LINE"
             echo "- **Changelog:**"
             echo "$RAW_LOG" | sed 's/^/  /'
             echo -e "\n---"
