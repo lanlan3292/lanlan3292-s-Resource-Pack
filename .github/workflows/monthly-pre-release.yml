@@ -96,12 +96,12 @@ jobs:
             BODY=$(gh release view "$R" --json body -q .body)
             # 先尝试用 ANCHOR 定位本分支段落
             SECTION=$(printf '%s' "$BODY" | sed -n "/$ANCHOR_ESCAPED/,/---/p" )
-            PREV_COMMIT_CAND=$(echo "$SECTION" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+            PREV_COMMIT_CAND=$(echo "$SECTION" | grep -oP '(?<=- \*\*Last Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
             # 若未命中 ANCHOR 区域，再尝试匹配 "### Branch: $BRANCH_LABEL" 段落（兼容旧记录）
             if [ -z "$PREV_COMMIT_CAND" ]; then
               BRANCH_ESCAPED=$(printf '%s' "$BRANCH_LABEL" | sed 's/[\/&]/\\&/g')
               SECTION=$(printf '%s' "$BODY" | sed -n "/^### Branch: $BRANCH_ESCAPED/,/---/p")
-              PREV_COMMIT_CAND=$(echo "$SECTION" | grep -oP '(?<=- \*\*Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
+              PREV_COMMIT_CAND=$(echo "$SECTION" | grep -oP '(?<=- \*\*Last Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
             fi
             if [ -n "$PREV_COMMIT_CAND" ]; then
               PREV_COMMIT="$PREV_COMMIT_CAND"
@@ -141,7 +141,7 @@ jobs:
             echo -e "\n$ANCHOR"
             echo "### Branch: $BRANCH_LABEL"
             echo "- **Last Build**: $FULL_DATE_MS"
-            echo "- **Commit**: $COMMIT"
+            echo "- **Last Commit**: $COMMIT"
             [ -n "$SINCE_LINE" ] && echo "$SINCE_LINE"
             echo "- **Changelog:**"
             echo "$RAW_LOG" | sed 's/^/  /'
