@@ -7,6 +7,6 @@
     "side": "minecraft:block/sculk_shrieker_side",
     "top": "minecraft:block/sculk_shrieker_top",
     "sculk_outline": "minecraft:block/redstone_outline",
-    "indicator": "minecraft:block/indicator/red"
+    "indicator": "minecraft:block/indicator/red_1"
   }
 }
