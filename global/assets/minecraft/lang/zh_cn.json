@@ -17,6 +17,7 @@
     "enchantment.level.9": "9",
     "enchantment.level.10": "10",
     "enchantment.level.255": "255",
+    "item.spawn_egg.peaceful": "和平难度下不可用",
     "menu.disconnect": "断开连接",
     "menu.game": "菜单",
     "menu.quit": "退出",
