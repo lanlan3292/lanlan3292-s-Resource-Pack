@@ -93,11 +93,12 @@ jobs:
             if [ "$R" = "$RELEASE_TAG" ]; then
               continue
             fi
-            BODY=$(gh release view "$R" --json body -q .body)
+            # 使用 gh api 获取 release body（按 tag），返回原始多行文本，避免 JSON 转义导致的匹配失败
+            BODY=$(gh api repos/"$GITHUB_REPOSITORY"/releases/tags/"$R" -q .body || gh release view "$R" --json body -q .body || true)
             # 先尝试用 ANCHOR 定位本分支段落
             SECTION=$(printf '%s' "$BODY" | sed -n "/$ANCHOR_ESCAPED/,/---/p" )
             PREV_COMMIT_CAND=$(echo "$SECTION" | grep -oP '(?<=- \*\*Last Commit\*\*: )[0-9a-f]+' | head -n 1 || true)
-            # 若未命中 ANCHOR 区域，再尝试匹配 "### Branch: $BRANCH_LABEL" 段落（兼容旧记录）
+            # 若未命中 ANCHOR 区域，再尝试匹配 "### Branch: $BRANCH_LABEL" 段落
             if [ -z "$PREV_COMMIT_CAND" ]; then
               BRANCH_ESCAPED=$(printf '%s' "$BRANCH_LABEL" | sed 's/[\/&]/\\&/g')
               SECTION=$(printf '%s' "$BODY" | sed -n "/^### Branch: $BRANCH_ESCAPED/,/---/p")
