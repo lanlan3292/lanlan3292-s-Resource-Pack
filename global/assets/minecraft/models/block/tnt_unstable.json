@@ -1,13 +1,14 @@
 {
 	"format_version": "1.9.0",
 	"credit": "lanlan3292",
+    "ambientocclusion": false,
 	"parent": "minecraft:block/cube",
 	"textures": {
 		"bottom": "block/tnt_bottom",
 		"side": "block/tnt_side",
 		"top": "block/tnt_top",
 		"particle": "#side",
-		"redstone": "block/redstone_torch"
+		"redstone": "block/redstone_outline"
 	},
 	"elements": [
 		{
@@ -27,12 +28,12 @@
 			"to": [0, 0, 0],
 			"shade": false,
 			"faces": {
-				"north": {"uv": [10, 8, 9, 7], "texture": "#redstone"},
-				"east": {"uv": [10, 8, 9, 7], "texture": "#redstone"},
-				"south": {"uv": [10, 8, 9, 7], "texture": "#redstone"},
-				"west": {"uv": [10, 8, 9, 7], "texture": "#redstone"},
-				"up": {"uv": [10, 8, 9, 7], "texture": "#redstone"},
-				"down": {"uv": [10, 8, 9, 7], "texture": "#redstone"}
+				"north": {"uv": [0, 0, 16, 16], "texture": "#redstone"},
+				"east": {"uv": [0, 0, 16, 16], "texture": "#redstone"},
+				"south": {"uv": [0, 0, 16, 16], "texture": "#redstone"},
+				"west": {"uv": [0, 0, 16, 16], "texture": "#redstone"},
+				"up": {"uv": [0, 0, 16, 16], "texture": "#redstone"},
+				"down": {"uv": [0, 0, 16, 16], "texture": "#redstone"}
 			}
 		}
 	]
