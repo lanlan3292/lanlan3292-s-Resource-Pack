@@ -6,7 +6,8 @@
         "top": "block/sculk_shrieker_top",
         "inner_top": "block/sculk_shrieker_inner_top",
         "particle": "block/sculk_shrieker_bottom",
-        "sculk_outline": "block/empty"
+        "sculk_outline": "block/empty",
+        "indicator": "block/empty"
     },
     "elements": [
         {
@@ -125,6 +126,45 @@
                 "up": {"uv": [0, 0, 16, 16], "texture": "#sculk_outline"},
                 "down": {"uv": [0, 0, 16, 16], "texture": "#sculk_outline"}
             }
-        }
+        },
+		{
+			"from": [7, 24.5, 7],
+			"to": [9, 30.5, 9],
+            "shade": false,
+			"faces": {
+				"north": {"uv": [2.5, 4.5, 3.5, 7.5], "texture": "#indicator"},
+				"east": {"uv": [2.5, 4.5, 3.5, 7.5], "texture": "#indicator"},
+				"south": {"uv": [2.5, 4.5, 3.5, 7.5], "texture": "#indicator"},
+				"west": {"uv": [2.5, 4.5, 3.5, 7.5], "texture": "#indicator"},
+				"up": {"uv": [2.5, 2.5, 3.5, 3.5], "texture": "#indicator"},
+				"down": {"uv": [2.5, 8.5, 3.5, 9.5], "texture": "#indicator"}
+			}
+		},
+		{
+			"from": [7, 21.5, 7],
+			"to": [9, 23.5, 9],
+            "shade": false,
+			"faces": {
+				"north": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"},
+				"east": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"},
+				"south": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"},
+				"west": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"},
+				"up": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"},
+				"down": {"uv": [2.5, 12.5, 3.5, 13.5], "texture": "#indicator"}
+			}
+		},
+		{
+			"from": [9.5, 31, 9.5],
+			"to": [6.5, 21, 6.5],
+            "shade": false,
+			"faces": {
+				"north": {"uv": [0.5, 2.5, 1.5, 9.5], "texture": "#indicator"},
+				"east": {"uv": [0.5, 2.5, 1.5, 9.5], "texture": "#indicator"},
+				"south": {"uv": [0.5, 2.5, 1.5, 9.5], "texture": "#indicator"},
+				"west": {"uv": [0.5, 2.5, 1.5, 9.5], "texture": "#indicator"},
+				"up": {"uv": [2.5, 14.5, 3.5, 15.5], "texture": "#indicator"},
+				"down": {"uv": [2.5, 0.5, 3.5, 1.5], "texture": "#indicator"}
+			}
+		}
     ]
 }
