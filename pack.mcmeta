@@ -29,20 +29,6 @@
 				]
 			},
 			{
-				"directory": "v16_38_backport",
-				"min_format": [
-					16
-				],
-				"max_format": [
-					37,
-					0
-				],
-				"formats": [
-					16,
-					37
-				]
-			},
-			{
 				"directory": "global",
 				"min_format": [
 					16
