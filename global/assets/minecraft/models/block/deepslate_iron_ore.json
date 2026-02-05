@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "minecraft:block/deepslate_iron_ore"
+    "all": "minecraft:block/framed/deepslate_iron_ore"
   }
 }
